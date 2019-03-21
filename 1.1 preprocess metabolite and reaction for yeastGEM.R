@@ -3,8 +3,56 @@ source('model change.R')
 source('transition for cellDesigner.R')
 
 # prepare the reaction format
-rxn <- read_excel("data/yeastGEM_latest version.xls", sheet = "Reaction List")
-metabolite <-  read_excel("data/yeastGEM_latest version.xls", sheet = "Metabolite List")
+rxn <- read_excel("data/yeastGEM_latest version1.xls", sheet = "Reaction List")
+metabolite <-  read_excel("data/yeastGEM_latest version1.xls", sheet = "Metabolite List")
+# Update the metabolite name in rxn sheet
+rxn_split <- splitAndCombine0(rxn$Reaction,rxn$Abbreviation,sep=" ")
+#using the detailed name to take place of the short name
+rxn_split$v3 <- getSingleReactionFormula(metabolite$Description,metabolite$Abbreviation,rxn_split$v1)
+for (i in 1:length(rxn_split$v2)){
+  if(rxn_split$v3[i]=="NA"){
+    rxn_split$v3[i] <- rxn_split$v1[i]
+  } else{
+    rxn_split$v3[i] <- rxn_split$v3[i]
+  }
+  
+}
+rxn_split$v3 <- str_replace_all(rxn_split$v3, " \\[.*?\\]", "")
+rxn_split$v3 <- str_trim(rxn_split$v3, side = "both")
+rxn_split$compartment <- str_extract(rxn_split$v1, "\\[.*?\\]")
+for (i in 1:nrow(rxn_split)){
+  if(!is.na(rxn_split$compartment[i])){
+    rxn_split$v3[i] <- paste(rxn_split$v3[i],rxn_split$compartment[i], sep = "")
+  } else{
+    rxn_split$v3[i] <- rxn_split$v3[i]
+  }
+}
+rxn$Description_new <- getMultipleReactionFormula(rxn_split$v3,rxn_split$v2,rxn$Abbreviation)
+rxn$Description_new <- str_replace_all(rxn$Description_new,";"," ")
+# Update the subsytem in rxn sheet to make sure each reaction belong to one subsystem
+subsystem_V3 <- read_excel("data/subsystem for yeast8 map_V3.xlsx")
+rxn$Subsystem_new <- getSingleReactionFormula(subsystem_V3$subsystem_map_v3,subsystem_V3$rxnID,rxn$Abbreviation)
+
+
+rxn <- filter(rxn, Flux != 0)
+
+# Update the metabolite formula
+metabolite$Description <- str_replace_all(metabolite$Description, " \\[.*?\\]", "")
+metabolite$Description <- str_trim(metabolite$Description, side = "both")
+metabolite$compartment <- str_extract(metabolite$Abbreviation, "\\[.*?\\]")
+for (i in 1:nrow(metabolite)){
+  if(!is.na(metabolite$compartment[i])){
+    metabolite$Description[i] <- paste(metabolite$Description[i],metabolite$compartment[i], sep = "")
+  } else{
+    metabolite$Description[i] <- metabolite$Description[i]
+  }
+}
+
+
+
+
+# prepare the rxn format for the cellDesigner
+colnames(metabolite) <-  c('Metabolite name','Metabolite description','Metabolite formula','Charge','Compartment','KEGGID','CHEBI')
 rxn_split_refine <- splitRxnToMetabolite.Yeast(rxn, metabolite)
 
 # analysis subsystem
@@ -13,8 +61,7 @@ analysis_subsystem <- rxn %>%
   arrange(., desc(n)) 
 
 # choose the subsytem
-#subsystem1 <- "glycolysis / gluconeogenesis \\( sce00010 \\)"
-subsystem1 <- "pyruvate metabolism \\( sce00620 \\)"
+subsystem1 <- "glycolysis / gluconeogenesis \\( sce00010 \\)"
 
 # Define the currency metabolite in each subsystem
 currency_metabolites <- DefineCurrencyMet(rxn_split_refine, 

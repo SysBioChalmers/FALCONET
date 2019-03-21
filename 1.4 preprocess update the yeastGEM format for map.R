@@ -1,17 +1,16 @@
 ### code to update the metabolite name in the model, which will be used for the yeast map
-source('main_function_map.R')
+source('model change.R')
 
 
 # input the model and metabolite
 # the model was obtained using the followed matlab code
 # model = readCbModel('yeastGEM')
 # outmodel = writeCbModel(model, 'format','xls', 'fileName', 'yeastGEM_october.xls')
-
 rxn <- read_excel("data/yeastGEM_october.xls", sheet = "Reaction List")
 metabolite <-  read_excel("data/yeastGEM_october.xls", sheet = "Metabolite List")
 
 
-# to kegg the consistency in metabolite name, we use the old name of metablite from yeast7.6
+# to keep the consistency in metabolite name, we use the old name of metablite from yeast7.6
 # input the metabolite annotation from yeast7.6
 metabolite_v7_6 <-  read_excel("data/yeastGEM_latest version.xls", 
                                                          sheet = "Metabolite List")
