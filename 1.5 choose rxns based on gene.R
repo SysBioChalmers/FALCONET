@@ -57,19 +57,6 @@ rxn_split_refine$v2 <- paste('r_',rxn_split_refine$v2, sep = "")
 
 
 # choose the rxn based on gene
-# function
-# this function is used to establish the mappping between rxn and gene
-rxnGeneMapping <- function(rxnid_gpr) {
-  ss <- rxnid_gpr
-  ss$GPR <- str_replace_all(ss$GPR, "and", "or")
-  ss0 <- splitAndCombine(ss$GPR, ss$Abbreviation, sep0 = "or")
-  ss0$v1 <- str_replace_all(ss0$v1, "\\(", "") %>%
-    str_replace_all(., "\\)", "") %>%
-    str_trim(., side = "both")
-  ss1 <- ss0[ss0$v1 != "NA" & !is.na(ss0$v1), ]
-  return(ss1)
-}
-
 rxn_gene <- rxnGeneMapping(rxnid_gpr=rxn)
 
 #analysis subsystem

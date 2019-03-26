@@ -18,11 +18,16 @@ rxnid1 <- str_replace_all(rxnid1, "id=","") %>%
 flux_data <- data.frame(rxnid = rxnid1, stringsAsFactors = FALSE)
 flux_data$gene_id <- str_replace_all(flux_data$rxnid, 'r_','g_')
 flux_data$protein_id <- str_replace_all(flux_data$rxnid, 'r_','p_')
-color_gene <- sample(c("ff0eb10e", "ffff0000", "ffccff66"),15,replace = TRUE)
-color_protein <- sample(c("ff0eb10e", "ffff0000", "ffccff66"),15,replace = TRUE)
+flux_data$g_value <- getSingleReactionFormula(flux_map$gene_fold, flux_map$Abbreviation,flux_data$rxnid)
+flux_data$p_value <- getSingleReactionFormula(flux_map$protein_fold, flux_map$Abbreviation,flux_data$rxnid)
+
+color_gene <- defineFoldColor(omic_fold = flux_data$g_value, up=1.5, down = 0.6)
+color_protein <- defineFoldColor(omic_fold = flux_data$p_value)
+
+
 #"ff0eb10e\" scheme=\"Color\"/>"   # green
 #ffff0000\" scheme=\"Color\"/>"   # red
-
+#ffccff66 # original background
 
 
 

@@ -623,6 +623,22 @@ prepareRXN <- function(rxn_core_carbon_inf, met_annotation_inf, currency_metabol
   return(rxn_core_carbon_cellD0)
 }
 
+# this function is used to establish the mappping between rxn and gene
+rxnGeneMapping <- function(rxnid_gpr) {
+  # input
+  # a dataframe contains two columns, GPR and Abbreviation
+  # output
+  # a dataframe contains the gene/rxn mapping
+  
+  ss <- rxnid_gpr
+  ss$GPR <- str_replace_all(ss$GPR, "and", "or")
+  ss0 <- splitAndCombine(ss$GPR, ss$Abbreviation, sep0 = "or")
+  ss0$v1 <- str_replace_all(ss0$v1, "\\(", "") %>%
+    str_replace_all(., "\\)", "") %>%
+    str_trim(., side = "both")
+  ss1 <- ss0[ss0$v1 != "NA" & !is.na(ss0$v1), ]
+  return(ss1)
+}
 
 
 
