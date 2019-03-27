@@ -33,8 +33,10 @@ rxn$Description_new <- str_replace_all(rxn$Description_new,";"," ")
 subsystem_V3 <- read_excel("data/subsystem for yeast8 map_V3.xlsx")
 rxn$Subsystem_new <- getSingleReactionFormula(subsystem_V3$subsystem_map_v3,subsystem_V3$rxnID,rxn$Abbreviation)
 
+# filter rxn based on the fluxes
+# rxn <- filter(rxn, Flux != 0) # we can remove the reaction with zero fluxes
+# which(rxn$Abbreviation =='r_2034')
 
-rxn <- filter(rxn, Flux != 0)
 
 # Update the metabolite formula
 metabolite$Description <- str_replace_all(metabolite$Description, " \\[.*?\\]", "")
@@ -61,7 +63,7 @@ analysis_subsystem <- rxn %>%
   arrange(., desc(n)) 
 
 # choose the subsytem
-subsystem1 <- "glycolysis / gluconeogenesis \\( sce00010 \\)"
+subsystem1 <- c("glycolysis / gluconeogenesis \\( sce00010 \\)")
 
 # Define the currency metabolite in each subsystem
 currency_metabolites <- DefineCurrencyMet(rxn_split_refine, 
@@ -83,9 +85,8 @@ rxn_split_refine <- addBaseTypeIntoRxn(rxn_split_refine, metabolite, currency_me
 #---------------------------------------------------
 # choose reaction based on the subsystem
 #-----------------------------------------------------
-rxn_core_carbon <-chooseRxnFromSubsystem(rxn_split_refine, subsystem0=subsystem1) 
+rxn_core_carbon <- chooseRxnFromSubsystem_new(rxn_split_refine_inf = rxn_split_refine, subsystem0 = subsystem1)
 rxnID_choose <- unique(rxn_core_carbon$v2)
-
 
 
 #------------------------------------------------------------------
@@ -112,9 +113,3 @@ produceInputForCellDesigner(met_annotation,
                             rxn_core_carbon_cellD0,
                             x_size=1200, 
                             y_size=2000)
-
-# note 
-# we could find in r_0035, h+[c] as the base product, should be corrected!!!
-#write.table(met_annotation, "result/met_annotation for pyruvate metabolism.txt", row.names = FALSE, sep = "\t")
-#write.table(gpr, "result/gpr_annotation for pyruvate metabolism.txt", row.names = FALSE, sep = "\t")
-
