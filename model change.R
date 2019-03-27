@@ -304,11 +304,15 @@ DefineCurrencyMet <- function(rxn_split_refine0, subsystem0, numberGEM, numberSu
   cat("statistical analysis of metabolites in model")
   print(analysis_metabolites)
   # if subsytem0 = NA, then only return the currency metabolites from the whole model
-  if (!is.na(subsystem0)) {
+  if (length(subsystem0) >= 1) {
     # choose one subsystem
     # subsystem0 <- "pyruvate metabolism \\( sce00620 \\)"
-    index_combine <- which(str_detect(metabolite_withoutCompartment$subsystem, subsystem0) == TRUE)
-
+    index_combine <- vector()
+    for (i in subsystem0){
+      print(i)
+      index_combine <- c(which(str_detect(metabolite_withoutCompartment$subsystem, subsystem0) == TRUE), index_combine)
+    }
+    
     ## define the currency in specific subsystem
     metabolite_subsystem <- metabolite_withoutCompartment[index_combine, ]
     metabote_analysis_subsystem <- metabolite_subsystem %>%
@@ -447,10 +451,11 @@ getConnectedTransport <- function (id,rxn_transport_id0, rxn_transport0, met_cor
 
 # this function is used to choose the reaction based on subsytem definition
 chooseRxnFromSubsystem <- function(rxn_split_refine_inf, subsystem0) {
-  #input
-  #rxn_split_refine_inf, rxn split format with the detailed annotation information
-  #output
-  #subsystem0, a string of defined subsystem
+  # input
+  # rxn_split_refine_inf, rxn split format with the detailed annotation information
+  # subsystem0, a string of defined subsystem
+  # output
+  # rxn_core_carbon, reactions and the related transport reactions from specific subsystems
   
   index_combine0 <- which(str_detect(rxn_split_refine_inf$subsystem, subsystem0) == TRUE)
   
@@ -495,6 +500,93 @@ chooseRxnFromSubsystem <- function(rxn_split_refine_inf, subsystem0) {
   return(rxn_core_carbon)
 }
 
+# here is two new version of above two functions
+# this function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
+# for specific subsystem
+getConnectedTransport_new <- function(rxn_split_refine_inf0, met_core_carbon0) {
+  # input
+  # rxn_split_refine_inf0, rxn split format with the detailed annotation information
+  # met_core_carbon0, a vector of the metabolite list from specific subsystem
+  # output
+  # transport reactions chose based on the metabolites in the specific subsystems
+  connected_rxn <- vector()
+  index_transport <- which(str_detect(rxn_split_refine_inf0$subsystem, "transport") == TRUE)
+  rxn_transport <- rxn_split_refine_inf0[index_transport, ]
+  rxn_transport_id <- unique(rxn_transport$v2)
+  for (i in 1:length(rxn_transport_id)) {
+    met_transport_index <- which(rxn_transport$v2 %in% rxn_transport_id[i])
+    met_transport <- rxn_transport$v3[met_transport_index]
+    met_transport_no_compartment <- str_replace_all(met_transport, "\\[.*?\\]", "")
+    # not considering 'H+'
+    index_currency <- which(met_transport_no_compartment %in% c("H+"))
+    if(length(index_currency)){
+      met_transport_remove_currency <- met_transport[-index_currency]
+    } else{
+      met_transport_remove_currency <- met_transport
+    }
+    
+    ss <- vector()
+    ss <- met_transport_remove_currency %in% met_core_carbon0
+    # estimate whether the metabolite in a transport reaction all occured in a chose metabolite list
+    if (sum(ss) == length(met_transport_remove_currency) & length(met_transport_remove_currency) >= 1) {
+      mm <- i
+    } else {
+      mm <- NA
+    }
+    connected_rxn[i] <- mm
+  }
+  connect_rxn0 <- connected_rxn[!is.na(connected_rxn)]
+  trasport_choosed <- rxn_transport_id[connect_rxn0]
+  trasport_rxn_choosed <- rxn_transport[which(rxn_transport$v2 %in% trasport_choosed == TRUE), ]
+  return(trasport_rxn_choosed)
+}
+
+# this function is used to choose the reaction based on subsytem definition
+chooseRxnFromSubsystem_new <- function(rxn_split_refine_inf, subsystem0){
+  # input
+  # rxn_split_refine_inf, rxn split format with the detailed annotation information
+  # subsystem0, a string of defined subsystem
+  # output
+  # rxn_core_carbon, reactions and the related transport reactions from specific subsystems
+  
+  #-----------------------------------------------test
+  #rxn_split_refine_inf <- rxn_split_refine
+  #subsystem0 <- subsystem1
+  
+  index_combine0 <- vector()
+  for(i in subsystem0){
+    index_combine0 <- c(which(str_detect(rxn_split_refine_inf$subsystem, i) == TRUE), index_combine0)
+  }
+  
+  ########### choose reaction
+  rxn_core_carbon <- rxn_split_refine_inf[index_combine0, ]
+  met_core_carbon <- unique(rxn_core_carbon$v3)
+  
+  # find the transport reactions to connect the gap in the above systerm
+  trasport_rxn_choosed <- getConnectedTransport_new(rxn_split_refine_inf0=rxn_split_refine_inf, met_core_carbon0=met_core_carbon)
+  ## add the connected transport reactions
+  rxn_core_carbon <- rbind.data.frame(rxn_core_carbon, trasport_rxn_choosed)
+  
+  ## remove connected reactions which is composed of currency metabolites
+  rxn_id_subsytem <- unique(rxn_core_carbon$v2)
+  met_inRXNsubsytem <- list()
+  for (i in seq(length(rxn_id_subsytem))) {
+    met_inRXNsubsytem[[i]] <- rxn_core_carbon$simple_name[which(rxn_core_carbon$v2 %in% rxn_id_subsytem[i] == TRUE)]
+  }
+  
+  rxn_choose <- vector()
+  for (i in seq(length(rxn_id_subsytem))) {
+    if (all(met_inRXNsubsytem[[i]] %in% currency_metabolites == TRUE)) {
+      rxn_choose[i] <- FALSE
+    } else {
+      rxn_choose[i] <- TRUE
+    }
+  }
+  
+  rxnID_choose0 <- rxn_id_subsytem[rxn_choose]
+  rxn_core_carbon <- rxn_core_carbon[which(rxn_core_carbon$v2 %in% rxnID_choose0 == TRUE), ]
+  return(rxn_core_carbon)
+}
 
 
 #this function is used to define the coordinate information for the metabolites

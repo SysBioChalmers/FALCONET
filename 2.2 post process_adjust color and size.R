@@ -11,11 +11,13 @@ metabolite_define <- met_annotation
 metabolite_define$id_mapping <- paste(metabolite_define$rxnID, metabolite_define$name, sep = "@")
 rxn_define <- rxn_core_carbon
 rxn_define$id_mapping <- paste(rxn_define$v2, rxn_define$v3, sep = "@")
-metabolite_define$mettype <- getMultipleReactionFormula(rxn_define$note,rxn_define$id_mapping,metabolite_define$id_mapping)
+metabolite_define$name0 <- str_replace_all(metabolite_define$name, "\\[.*?\\]", "")
+metabolite_define$currency <- NA
+metabolite_define$currency[metabolite_define$name0 %in% currency_metabolites] <-'YES'
 
 # here we can define the currency metabolite and non currency metabolite
 # choose the none-base metabolites
-metabolite_choose <- filter(metabolite_define, mettype !="base" | type =='PROTEIN' | type=='GENE')
+metabolite_choose <- filter(metabolite_define, currency == "YES" | type =='PROTEIN' | type=='GENE')
 changeFontSize <- function(positionID, uniqueID, onemap) {
   index <- which(str_detect(onemap, "celldesigner:speciesAlias") & str_detect(onemap, positionID) & str_detect(onemap, uniqueID))
   # bounds line

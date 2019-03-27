@@ -2,6 +2,24 @@
 # the xml file obtained based on the automatic layout.
 # otherwise the followed code can't be used
 
+# function to define the color based on the fold change
+defineGeneFoldColor <- function(omic_fold, up=2, down=0.5) {
+  color <- vector()
+  for (i in seq_along(omic_fold)) {
+    if (omic_fold[i] >= up) {
+      color[i] <- "ffff0000" # red
+    } else if (omic_fold[i] < down) {
+      color[i] <- "ff0eb10e" # green
+    } else {
+      color[i] <- "ffccff66"
+    }
+  }
+  
+  return(color)
+}
+
+
+
 yeast_map <- readLines(file("result/model_test_check.xml"))
 index_rxn <- which(str_detect(yeast_map, "reaction metaid"))
 
@@ -21,8 +39,8 @@ flux_data$protein_id <- str_replace_all(flux_data$rxnid, 'r_','p_')
 flux_data$g_value <- getSingleReactionFormula(flux_map$gene_fold, flux_map$Abbreviation,flux_data$rxnid)
 flux_data$p_value <- getSingleReactionFormula(flux_map$protein_fold, flux_map$Abbreviation,flux_data$rxnid)
 
-color_gene <- defineFoldColor(omic_fold = flux_data$g_value, up=1.5, down = 0.6)
-color_protein <- defineFoldColor(omic_fold = flux_data$p_value)
+color_gene <- defineGeneFoldColor(omic_fold = flux_data$g_value, up=1.5, down = 0.6)
+color_protein <- defineGeneFoldColor(omic_fold = flux_data$p_value)
 
 
 #"ff0eb10e\" scheme=\"Color\"/>"   # green
@@ -105,6 +123,3 @@ yeast_map <- str_replace_all(yeast_map, "ffccff66", "ff33ffff")
 
 
 writeLines(yeast_map, file("result/model_test_check.xml"))
-
-
-
