@@ -7,8 +7,6 @@ index_rxn <- which(str_detect(yeast_map, "reaction metaid"))
 flux_map <- read_excel("data/flux_map.xlsx")
 
 # function to define the color based on the fold change
-
-
 defineFluxFoldColor <- function(omic_fold, up=2, down=0.5) {
   color <- vector()
   for (i in seq_along(omic_fold)) {
