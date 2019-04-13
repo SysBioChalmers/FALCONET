@@ -117,13 +117,29 @@ for (i in seq_along(rxn_core_carbon_cellD0$rxnID)){
 
 # define the edge
 edge0 <- data.frame(from1 = from0, to1 = to0, stringsAsFactors = FALSE)
+# add the reversiblity reaction
+rxn_rev <- filter(rxn, IsReversible==TRUE)
+rxn_rev <- rxn_rev$Abbreviation
 
-edge0$from <- getSingleReactionFormula(node0$id,node0$label,edge0$from1)
-edge0$to <- getSingleReactionFormula(node0$id,node0$label,edge0$to1)
+edge0$rev_sign1 <- edge0$from1 %in% rxn_rev
+edge0$rev_sign2 <- edge0$to1 %in% rxn_rev
+edge2 <- filter(edge0, rev_sign1 ==TRUE | rev_sign2==TRUE)
+edge2_o <-  edge2[,1:2]
+edge2_n <- edge2_o
+edge2_n$from1 <- edge2_o$to1
+edge2_n$to1 <- edge2_o$from1
 
-edge0 <- edge0[,c('from','to')]
-edge0$from <- as.numeric(edge0$from)
-edge0$to <- as.numeric(edge0$to)
+
+
+edge3 <- rbind.data.frame(edge0[,1:2], edge2_n)
+edge3$from <- getSingleReactionFormula(node0$id,node0$label,edge3$from1)
+edge3$to <- getSingleReactionFormula(node0$id,node0$label,edge3$to1)
+
+edge4 <- edge3[,c('from','to')]
+edge4$from <- as.numeric(edge4$from)
+edge4$to <- as.numeric(edge4$to)
+
+
 
 # creat the graph
 # Create the graph object
@@ -139,7 +155,7 @@ i_graph_2 <-
 i_graph_3 <-
   i_graph_2 %>%
   add_edges_from_table(
-    table = edge0,
+    table = edge4,
     from_col = from,
     to_col = to,
     from_to_map = id_external)
@@ -156,6 +172,6 @@ i_graph_3 %>%
 i_graph_3 %>%
   get_paths(
     from = 54,
-    to = 40)
+    to = 49)
 
 
