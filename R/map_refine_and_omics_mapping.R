@@ -1,12 +1,15 @@
 # this function is used to adjust size of non base metabolite in the map
+#' Title
+#'
+#' @param positionID the position of the component
+#' @param uniqueID the unique ID of the metabolite
+#' @param onemap a map in xml format
+#'
+#' @return
+#' @export onemap a refined map
+#'
+#' @examples
 changeFontSize <- function(positionID, uniqueID, onemap) {
-  # input
-  # positionID: the position of the component
-  # uniqueID: the unique ID of the metabolite
-  # onemap: a map in xml format
-  # output
-  # a refined map
-
 
   index <- which(str_detect(onemap, "celldesigner:speciesAlias") & str_detect(onemap, positionID) & str_detect(onemap, uniqueID))
   # bounds line
