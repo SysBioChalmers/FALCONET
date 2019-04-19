@@ -165,7 +165,7 @@ render_graph(i_graph_3, layout = 'nicely', output = "visNetwork")
 # export the graph
 i_graph_3 %>%
   export_graph(
-    file_name = "result/graph.pdf",
+    file_name = "result/graph.svg",
     title = "Simple Graph")
 
 # find the path between two nodes
