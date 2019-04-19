@@ -1,6 +1,6 @@
 library(hongR)
 library(tidyverse)
-
+source('map_refine_and_omics_mapping.R')
 ## change the size for the none-base metabolites
 ## define a list of none-base metabolites list
 ## adjust the size based on none-base metabolite list
@@ -18,21 +18,7 @@ metabolite_define$currency[metabolite_define$name0 %in% currency_metabolites] <-
 # here we can define the currency metabolite and non currency metabolite
 # choose the none-base metabolites
 metabolite_choose <- filter(metabolite_define, currency == "YES" | type =='PROTEIN' | type=='GENE')
-changeFontSize <- function(positionID, uniqueID, onemap) {
-  index <- which(str_detect(onemap, "celldesigner:speciesAlias") & str_detect(onemap, positionID) & str_detect(onemap, uniqueID))
-  # bounds line
-  pos_bounds <- index + 2
-  # size line
-  pos_size <- index + 3
-  # box size line
-  pos_box <- index + 7
-  # change the size of metabolite component in the graph
-  onemap[pos_bounds] <- str_replace_all(onemap[pos_bounds], "w=\"70.0\" h=\"25.0\"/>", "w=\"35.0\" h=\"12.0\"/>")
-  onemap[pos_size] <- str_replace_all(onemap[pos_size], "<celldesigner:font size=\"12\"/>", "<celldesigner:font size=\"8\"/>")
-  onemap[pos_box] <- str_replace_all(onemap[pos_box], "<celldesigner:boxSize width=\"70.0\" height=\"25.0\"/>", "<celldesigner:boxSize width=\"35.0\" height=\"12.0\"/>")
-  return(onemap)
 
-}
 
 # batch process
 for (i in 1:nrow(metabolite_choose)){
