@@ -5,16 +5,26 @@ library(igraph)
 library(networkD3)
 library(hongR)
 
+#' function to establish the single mapping between one gene and one rxn
+#'
+#' @param gene a vector contains GPR relation for each reaction
+#' @param rxn a vector contains the rxnid
+#' @param sep0 a sign to connect the gene
+#'
+#' @return
+#' @export rxnGene a dataframe contains the single mapping between gene and reaction
+#'
+#' @examples
 splitAndCombine0 <- function(gene, rxn, sep0) { ##one rxn has several genes, this function was used to splite the genes
-  
+
   gene <- str_split(gene, sep0)
   tt<- length(gene)
   gene0 <- list()
   for (i in 1:tt){
     gene0[[i]] <- paste(rxn[i], gene[[i]], sep = "@@@")
-    
+
   }
-  
+
   gene1 <- unlist(gene0)
   gene2 <- str_split(gene1, "@@@" )
   rxnGene <- data.frame(v1=character(length(gene2)),stringsAsFactors = FALSE)
@@ -23,7 +33,7 @@ splitAndCombine0 <- function(gene, rxn, sep0) { ##one rxn has several genes, thi
     rxnGene$v1[j] <- gene2[[j]][2]
     rxnGene$v2[j] <- gene2[[j]][1]
   }
-  
+
   return(rxnGene)
 }
 
@@ -38,11 +48,11 @@ splitRxnToMetabolite <- function(reationFrame, sep0){
   for (i in seq(length(rxn_list))){
     rxn_list[[i]][1] <- paste("reactant",rxn_list[[i]][1],sep = "@@" )
     rxn_list[[i]][1] <- paste(reationFrame$ID0[i],rxn_list[[i]][1],sep = "@" )
-    
+
     rxn_list[[i]][2] <- paste("product",rxn_list[[i]][2],sep = "@@" )
     rxn_list[[i]][2] <- paste(reationFrame$ID0[i],rxn_list[[i]][2],sep = "@" )
   }
-  
+
   rxn_unlist <- unlist(rxn_list)
   rxn0_list <- str_split(rxn_unlist, "@@")
   ss1 <- vector()
@@ -52,11 +62,11 @@ splitRxnToMetabolite <- function(reationFrame, sep0){
     ss2[i] <- rxn0_list[[i]][2]
   }
   ss2_list <- str_split(ss2, " \\+ ")
-  
+
   for (i in seq(length(rxn0_list))){
     ss2_list[[i]] <- paste(ss1[[i]], ss2_list[[i]], sep = "@@")
   }
-  
+
   ss2_unlist <- unlist(ss2_list)
   ss3_list <- str_split(ss2_unlist, "@@")
   ss4 <- vector()
@@ -73,7 +83,7 @@ splitRxnToMetabolite <- function(reationFrame, sep0){
       rxn_met$MetID[i] <- paste(1, rxn_met$MetID[i], " ")
     }
   }
-  
+
   #remove the coefficient for each metabolites, which will be easy to standardize this metabolite
   rxn_met <- rxn_met %>% separate(.,MetID, into = c('coefficient','MetID'), sep = " ")
   #rxn_met$MetID <- str_replace_all(rxn_met$MetID, "[:digit:] ","") %>%
@@ -96,11 +106,11 @@ splitRxnToMetabolite.Ecoli <- function(reationFrame, sep0){
   for (i in seq(length(rxn_list))){
     rxn_list[[i]][1] <- paste("reactant",rxn_list[[i]][1],sep = "@@" )
     rxn_list[[i]][1] <- paste(reationFrame$ID0[i],rxn_list[[i]][1],sep = "@" )
-    
+
     rxn_list[[i]][2] <- paste("product",rxn_list[[i]][2],sep = "@@" )
     rxn_list[[i]][2] <- paste(reationFrame$ID0[i],rxn_list[[i]][2],sep = "@" )
   }
-  
+
   rxn_unlist <- unlist(rxn_list)
   rxn0_list <- str_split(rxn_unlist, "@@")
   ss1 <- vector()
@@ -110,11 +120,11 @@ splitRxnToMetabolite.Ecoli <- function(reationFrame, sep0){
     ss2[i] <- rxn0_list[[i]][2]
   }
   ss2_list <- str_split(ss2, " \\+ ")
-  
+
   for (i in seq(length(rxn0_list))){
     ss2_list[[i]] <- paste(ss1[[i]], ss2_list[[i]], sep = "@@")
   }
-  
+
   ss2_unlist <- unlist(ss2_list)
   ss3_list <- str_split(ss2_unlist, "@@")
   ss4 <- vector()
@@ -150,10 +160,10 @@ splitRxnToMetabolite.Yeast <- function(rxn_inf, metabolite_inf) {
   # metabolite_inf, metabolite annotation of yeast GEM
   #output
   # rxn_split_refine a dataframe contained the split format of yeast GEM
-  
+
   rxn_split <- splitAndCombine0(rxn_inf$Reaction, rxn_inf$Abbreviation, sep = " ")
   rxn_split$v3 <- getSingleReactionFormula(metabolite_inf$`Metabolite description`, metabolite_inf$`Metabolite name`, rxn_split$v1)
-  
+
   for (i in 1:length(rxn_split$v2)) {
     if (rxn_split$v3[i] == "NA") {
       rxn_split$v3[i] <- rxn_split$v1[i]
@@ -169,10 +179,10 @@ splitRxnToMetabolite.Yeast <- function(rxn_inf, metabolite_inf) {
   for (i in 1:length(rxn_ID)) {
     met_type0 <- c(met_type0, getMetType(rxn_ID[i], rxn_split))
   }
-  
+
   rxn_split$type <- met_type0
   rxn_split_refine <- rxn_split[which(str_detect(rxn_split$v3, "]") == TRUE), ]
-  
+
   ## classify the reactions based on subsystems
   rxn_system <- select(rxn_inf, Abbreviation, Subsystem_new)
   index00 <- which(str_detect(rxn_system$Subsystem_new, "transport") == TRUE)
@@ -180,10 +190,10 @@ splitRxnToMetabolite.Yeast <- function(rxn_inf, metabolite_inf) {
   subsystem <- rxn_system %>%
     count(Subsystem_new) %>%
     arrange(., desc(n))
-  
+
   rxn_split_refine$subsystem <- getSingleReactionFormula(rxn_system$Subsystem_new, rxn_system$Abbreviation, rxn_split_refine$v2)
   return(rxn_split_refine)
-  
+
 }
 
 #when removing the currency metabolites. some reaction could cotain only metabolite
@@ -193,28 +203,28 @@ removeRxnWithSingleMet <- function(rxn_split=rxn_split_refine) {
   #rxn_split, a split rxn format
   #output
   #rxn_split, a split rxn in which a reaction with single metabolite or only with reactant (product) was removed
-  
+
   analysis_rxn <- rxn_split %>%
     count(v2) %>% ## calculate the number of each metabolite
     arrange(., desc(n)) ## order the metabolites based on the number
-  
+
   rxn_with_one_met <- which(analysis_rxn$n == 1)
   rxn_remove <- analysis_rxn$v2[rxn_with_one_met]
   which(rxn_split$v2 %in% rxn_remove == FALSE)
   rxn_split <- rxn_split[which(rxn_split$v2 %in% rxn_remove == FALSE), ]
-  
+
   # further remove the reactions with only one product or only one reactant
   rxn_index <- list()
   rxn_unique <- unique(rxn_split$v2)
   for (i in 1:length(rxn_unique)) {
     rxn_index[[i]] <- which(rxn_split$v2 %in% rxn_unique[i])
   }
-  
+
   rxn_metabotite_type <- list()
   for (i in 1:length(rxn_unique)) {
     rxn_metabotite_type[[i]] <- rxn_split$type[rxn_index[[i]]]
   }
-  
+
   ss <- vector()
   for (i in 1:length(rxn_unique)) {
     if ("reactant" %in% rxn_metabotite_type[[i]] & "product" %in% rxn_metabotite_type[[i]]) {
@@ -241,11 +251,11 @@ getMetType <- function(rxnID_inf, rxn_split_inf){
   for (i in ss[1]:(ss_split-1)){
     met_type1[i-ss[1]+1] <- "reactant"
   }
-  
+
   for (i in (ss_split):ss[length(ss)]){
     met_type2[i-ss_split+1] <- "product"
   }
-  
+
   met_type <- c(met_type1,met_type2)
   return(met_type)
 }
@@ -312,7 +322,7 @@ DefineCurrencyMet <- function(rxn_split_refine0, subsystem0, numberGEM, numberSu
       print(i)
       index_combine <- c(which(str_detect(metabolite_withoutCompartment$subsystem, subsystem0) == TRUE), index_combine)
     }
-    
+
     ## define the currency in specific subsystem
     metabolite_subsystem <- metabolite_withoutCompartment[index_combine, ]
     metabote_analysis_subsystem <- metabolite_subsystem %>%
@@ -334,7 +344,7 @@ DefineCurrencyMet <- function(rxn_split_refine0, subsystem0, numberGEM, numberSu
 ## define the base reactant and product for cellDesigner
 DefineBaseMetabolite <- function(rxnID0, rxn_split_refine_inf){
   ## input: rxnID0: a reaction ID
-  ## input: rxn_split_refine_inf: datafram contains the relation of rxnID0 and metabolite, as well as metabolite formula and 
+  ## input: rxn_split_refine_inf: datafram contains the relation of rxnID0 and metabolite, as well as metabolite formula and
   ## and carbon number
   ## test rxnID0 <- "r_0520"
   ## find the base reactant (with largest Carbon number)
@@ -345,28 +355,28 @@ DefineBaseMetabolite <- function(rxnID0, rxn_split_refine_inf){
       nn[1] <- rxn_reactant[1]} else{
         ss <- max(as.numeric(rxn_split_refine_inf$carbonNumber[rxn_reactant]),na.rm = TRUE)
         tt <- which(as.numeric(rxn_split_refine_inf$carbonNumber[rxn_reactant]) == ss)
-        
+
         nn[1] <- rxn_reactant[1]-1+tt
-      } 
+      }
   } else{
     nn[1] <- ""
   }
   ## find the base product (with largest carbon nunber)
   if (length(which( rxn_split_refine_inf$v2 %in% rxnID0 ==TRUE & rxn_split_refine_inf$type =="product")) !=0){
     rxn_product <- which( rxn_split_refine_inf$v2 %in% rxnID0 ==TRUE & rxn_split_refine_inf$type =="product")
-    
+
     if(all(rxn_split_refine_inf$carbonNumber[rxn_product] =="")){
       nn[2] <-rxn_product[1]
     } else{
       ss0 <- max(as.numeric(rxn_split_refine_inf$carbonNumber[rxn_product]),na.rm = TRUE)
       tt0 <- which(as.numeric(rxn_split_refine_inf$carbonNumber[rxn_product]) == ss0)
       nn[2] <- rxn_product[1]-1+tt0
-      
+
     }
   } else {
     nn[2] <-""
   }
-  
+
   return(nn)
 }
 
@@ -377,30 +387,30 @@ addBaseTypeIntoRxn <- function(rxn_split_refine_inf, metabolite_inf, currency_me
   ## based on Zhengming's suggestion, we will remain these currency metabolites in each subsystem
   ## but there will different methods to format for the currecy metabolite and general metabolite
   ## for these currency metabolite, there carbon number will be set as "" to avoid the wrong defination of base reactant or product
-  
+
   #input
   # rxn_split_refine_inf  rxn split format
   # metabolite_inf metabolite annotation information
   # currency_metabolites_inf a vector of currency metabolites
   #output
   #rxn_split_refine, rxn_split with "base" sign
-  
-  
-  
+
+
+
   ## obtain other information
   rxn_split_refine_inf$metabolit_formula <- getSingleReactionFormula(metabolite_inf$`Metabolite formula`,metabolite_inf$`Metabolite description`,rxn_split_refine_inf$v3)
-  
+
   for (i in 1:length(rxn_split_refine_inf$v2)){
     rxn_split_refine_inf$carbonCompostion[i] <- getMetaboliteComposition(rxn_split_refine_inf$metabolit_formula[i])
   }
-  
+
   for (i in 1:length(rxn_split_refine_inf$v2)){
     rxn_split_refine_inf$carbonNumber[i] <- getCompositionNum(rxn_split_refine_inf$carbonCompostion[i])
   }
   rxn_split_refine_inf$simple_name <- str_replace_all(rxn_split_refine_inf$v3,"\\[.*?\\]", "")
   index_currency <- which(rxn_split_refine_inf$simple_name %in% currency_metabolites_inf == TRUE) ### it should be noted: currency_metabolites should be small range
   rxn_split_refine_inf$carbonNumber[index_currency] <- ""
-  
+
   rxn_split_refine_inf$note <- ""
   rownames(rxn_split_refine_inf) <- 1:nrow(rxn_split_refine_inf)
   metabolite_type <- list()
@@ -409,7 +419,7 @@ addBaseTypeIntoRxn <- function(rxn_split_refine_inf, metabolite_inf, currency_me
   for (i in 1:length(rxn_ID)) {
     metabolite_type[[i]] <- DefineBaseMetabolite(rxn_ID[i], rxn_split_refine_inf)
   }
-  
+
   metabolite_type <- unlist(metabolite_type)
   for (i in 1:length(rxn_split_refine_inf$v2)) {
     if (i %in% metabolite_type) {
@@ -418,7 +428,7 @@ addBaseTypeIntoRxn <- function(rxn_split_refine_inf, metabolite_inf, currency_me
       rxn_split_refine_inf$note[i] <- ""
     }
   }
-  
+
   return(rxn_split_refine_inf)
 }
 
@@ -443,7 +453,7 @@ getConnectedTransport <- function (id,rxn_transport_id0, rxn_transport0, met_cor
     mm <- id
   } else{
     mm <- NA
-    
+
   }
   return(mm)
 }
@@ -456,13 +466,13 @@ chooseRxnFromSubsystem <- function(rxn_split_refine_inf, subsystem0) {
   # subsystem0, a string of defined subsystem
   # output
   # rxn_core_carbon, reactions and the related transport reactions from specific subsystems
-  
+
   index_combine0 <- which(str_detect(rxn_split_refine_inf$subsystem, subsystem0) == TRUE)
-  
+
   ########### choose reaction
   rxn_core_carbon <- rxn_split_refine_inf[index_combine0, ]
   met_core_carbon <- unique(rxn_core_carbon$v3)
-  
+
   # find the transport reactions to connect the gap in the above systerm
   index_transport <- which(str_detect(rxn_split_refine_inf$subsystem, "transport") == TRUE)
   rxn_transport <- rxn_split_refine_inf[index_transport, ]
@@ -477,15 +487,15 @@ chooseRxnFromSubsystem <- function(rxn_split_refine_inf, subsystem0) {
   trasport_choosed <- rxn_transport_id[connect_rxn0]
   trasport_rxn_choosed <- rxn_transport[which(rxn_transport$v2 %in% trasport_choosed == TRUE), ]
   rxn_core_carbon <- rbind.data.frame(rxn_core_carbon, trasport_rxn_choosed)
-  
-  
+
+
   ## remove connected reactions which is composed of currency metabolites
   rxn_id_subsytem <- unique(rxn_core_carbon$v2)
   met_inRXNsubsytem <- list()
   for (i in seq(length(rxn_id_subsytem))) {
     met_inRXNsubsytem[[i]] <- rxn_core_carbon$simple_name[which(rxn_core_carbon$v2 %in% rxn_id_subsytem[i] == TRUE)]
   }
-  
+
   rxn_choose <- vector()
   for (i in seq(length(rxn_id_subsytem))) {
     if (all(met_inRXNsubsytem[[i]] %in% currency_metabolites == TRUE)) {
@@ -494,7 +504,7 @@ chooseRxnFromSubsystem <- function(rxn_split_refine_inf, subsystem0) {
       rxn_choose[i] <- TRUE
     }
   }
-  
+
   rxnID_choose0 <- rxn_id_subsytem[rxn_choose]
   rxn_core_carbon <- rxn_core_carbon[which(rxn_core_carbon$v2 %in% rxnID_choose0 == TRUE), ]
   return(rxn_core_carbon)
@@ -524,7 +534,7 @@ getConnectedTransport_new <- function(rxn_split_refine_inf0, met_core_carbon0) {
     } else{
       met_transport_remove_currency <- met_transport
     }
-    
+
     ss <- vector()
     ss <- met_transport_remove_currency %in% met_core_carbon0
     # estimate whether the metabolite in a transport reaction all occured in a chose metabolite list
@@ -548,32 +558,32 @@ chooseRxnFromSubsystem_new <- function(rxn_split_refine_inf, subsystem0){
   # subsystem0, a string of defined subsystem
   # output
   # rxn_core_carbon, reactions and the related transport reactions from specific subsystems
-  
+
   #-----------------------------------------------test
   #rxn_split_refine_inf <- rxn_split_refine
   #subsystem0 <- subsystem1
-  
+
   index_combine0 <- vector()
   for(i in subsystem0){
     index_combine0 <- c(which(str_detect(rxn_split_refine_inf$subsystem, i) == TRUE), index_combine0)
   }
-  
+
   ########### choose reaction
   rxn_core_carbon <- rxn_split_refine_inf[index_combine0, ]
   met_core_carbon <- unique(rxn_core_carbon$v3)
-  
+
   # find the transport reactions to connect the gap in the above systerm
   trasport_rxn_choosed <- getConnectedTransport_new(rxn_split_refine_inf0=rxn_split_refine_inf, met_core_carbon0=met_core_carbon)
   ## add the connected transport reactions
   rxn_core_carbon <- rbind.data.frame(rxn_core_carbon, trasport_rxn_choosed)
-  
+
   ## remove connected reactions which is composed of currency metabolites
   rxn_id_subsytem <- unique(rxn_core_carbon$v2)
   met_inRXNsubsytem <- list()
   for (i in seq(length(rxn_id_subsytem))) {
     met_inRXNsubsytem[[i]] <- rxn_core_carbon$simple_name[which(rxn_core_carbon$v2 %in% rxn_id_subsytem[i] == TRUE)]
   }
-  
+
   rxn_choose <- vector()
   for (i in seq(length(rxn_id_subsytem))) {
     if (all(met_inRXNsubsytem[[i]] %in% currency_metabolites == TRUE)) {
@@ -582,7 +592,7 @@ chooseRxnFromSubsystem_new <- function(rxn_split_refine_inf, subsystem0){
       rxn_choose[i] <- TRUE
     }
   }
-  
+
   rxnID_choose0 <- rxn_id_subsytem[rxn_choose]
   rxn_core_carbon <- rxn_core_carbon[which(rxn_core_carbon$v2 %in% rxnID_choose0 == TRUE), ]
   return(rxn_core_carbon)
@@ -590,12 +600,12 @@ chooseRxnFromSubsystem_new <- function(rxn_split_refine_inf, subsystem0){
 
 
 #this function is used to define the coordinate information for the metabolites
-prepareMET <- function(rxn_core_carbon_inf, 
+prepareMET <- function(rxn_core_carbon_inf,
                        currency_metabolites_inf,
-                       rxnID_choose_inf,  
-                       x_vector = seq(100, 12000, by = 100), 
+                       rxnID_choose_inf,
+                       x_vector = seq(100, 12000, by = 100),
                        y_vector = seq(100, 15000, by = 50)) {
-  
+
   #input
   # rxn_core_carbon_inf, a dataframe contained the detailed annotation of rxn_core
   # currency_metabolites_inf, a vector of currency metabolites
@@ -604,36 +614,36 @@ prepareMET <- function(rxn_core_carbon_inf,
   # y_vector, size of graph
   #outout
   #met_annotation, a dataframe contains the detailed annotation for met
-  
-  
+
+
   met_core_carbon <- select(rxn_core_carbon_inf, v2, v3, type, simple_name)
   colnames(met_core_carbon) <- c("rxnID", "name", "type", "simple_name")
   ## replace the type
   met_core_carbon$type <- "SIMPLE_MOLECULE"
-  
+
   # divide the met into two types
   met_no_currency <- met_core_carbon[which(met_core_carbon$simple_name %in% currency_metabolites_inf == FALSE), ]
-  
+
   # remove the duplicated metabolite in met which is not currency
   met_no_currency0 <- met_no_currency[!duplicated(met_no_currency$name), ]
   met_currency <- met_core_carbon[which(met_core_carbon$simple_name %in% currency_metabolites_inf == TRUE), ]
-  
+
   protein_annotation <- data.frame(rxnID = character(length(rxnID_choose_inf)), stringsAsFactors = FALSE)
   gene_annotation <- data.frame(rxnID = character(length(rxnID_choose_inf)), stringsAsFactors = FALSE)
   protein_annotation$rxnID <- rxnID_choose_inf
   protein_annotation$name <- str_replace_all(protein_annotation$rxnID, "r", "p")
   protein_annotation$type <- "PROTEIN"
-  
+
   gene_annotation$rxnID <- rxnID_choose_inf
   gene_annotation$name <- str_replace_all(gene_annotation$rxnID, "r", "g")
   gene_annotation$type <- "GENE"
-  
+
   met_final <- rbind.data.frame(select(met_no_currency0, "rxnID", "name", "type"), select(met_currency, "rxnID", "name", "type"), protein_annotation, gene_annotation)
-  
+
   ## sort by rxnID
   met_final <- met_final[order(met_final$rxnID), ]
   met_final0 <- met_final$name
-  
+
   ## define the unique species
   unique_species <- data.frame(species = character(length(unique(met_final0))), stringsAsFactors = FALSE)
   unique_species$name <- unique(met_final0)
@@ -643,16 +653,16 @@ prepareMET <- function(rxn_core_carbon_inf,
   met_annotation$species <- getSingleReactionFormula(unique_species$species, unique_species$name, met_annotation$name)
   met_annotation$id <- paste("sa", 1:length(met_final0), sep = "")
   met_annotation$MetaID <- paste("CDMT0000", 1:length(met_final0), sep = "")
-  
+
   # define the size of whole graph
   met_annotation$x <- rep(x_vector, each = 30)[1:length(met_annotation$id)]
   met_annotation$y <- rep(y_vector, times = 12)[1:length(met_annotation$id)]
-  
+
   met_annotation$type <- met_final$type
   met_annotation$rxnID <- met_final$rxnID
   met_annotation$metID <- paste("m", 1:length(met_final0), sep = "")
   met_annotation <- select(met_annotation, metID, id, species, name, x, y, type, MetaID, rxnID) # will be the data source for import metabolites into graph
-  
+
   return(met_annotation)
 }
 
@@ -664,12 +674,12 @@ prepareGPR <- function(met_annotation_inf) {
   # met_annotation_inf a dataframe for the metabolite annotation with 9 columns which contains the metabolite, gene and proteins
   # output
   # gpr, a dataframe contains the annotation information for gene and protein
-  
+
   # define the proteinID information
   protein_annotation0 <- filter(met_annotation_inf, type == "PROTEIN") %>%
     select(., rxnID, species, id, MetaID)
   colnames(protein_annotation0) <- c("rxnID", "protein_specie", "protein_id", "MetaID_p")
-  
+
   # define the the gene information
   gene_annotation0 <- filter(met_annotation_inf, type == "GENE") %>%
     select(., rxnID, species, id, MetaID)
@@ -689,26 +699,26 @@ prepareRXN <- function(rxn_core_carbon_inf, met_annotation_inf, currency_metabol
   # currency_metabolites_inf, a vector of currency metabolites
   # output
   # rxn_core_carbon_cellD0, a dataframe for the rxn annotation with 7 columns
-  
+
   rxn_core_carbon_cellD <- select(rxn_core_carbon_inf, v2, v3, type, note, simple_name)
   colnames(rxn_core_carbon_cellD) <- c("rxnID", "name", "type", "note", "simple_name")
   # this metabolite in rxn should be divided into two types
   rxn_core_with_currency <- rxn_core_carbon_cellD[which(rxn_core_carbon_cellD$simple_name %in% currency_metabolites_inf == TRUE), ]
   rxn_core_with_currency$combine_rxnID_name <- paste(rxn_core_with_currency$rxnID, rxn_core_with_currency$name)
-  
+
   # give the information of currency metabolites in rxn by mapping rhe "combine_rxnID_name"
   met_annotation2 <- met_annotation_inf
   met_annotation2$combine_rxnID_name <- paste(met_annotation2$rxnID, met_annotation2$name)
   rxn_core_with_currency$specie <- getSingleReactionFormula(met_annotation2$species, met_annotation2$combine_rxnID_name, rxn_core_with_currency$combine_rxnID_name)
   rxn_core_with_currency$id <- getSingleReactionFormula(met_annotation2$id, met_annotation2$combine_rxnID_name, rxn_core_with_currency$combine_rxnID_name)
   rxn_core_with_currency$MetaID <- getSingleReactionFormula(met_annotation2$MetaID, met_annotation2$combine_rxnID_name, rxn_core_with_currency$combine_rxnID_name)
-  
+
   # give the information of general metabolites in rxn by mapping the name of metabolite
   rxn_core_without_currency <- rxn_core_carbon_cellD[which(rxn_core_carbon_cellD$simple_name %in% currency_metabolites_inf == FALSE), ]
   rxn_core_without_currency$specie <- getSingleReactionFormula(met_annotation_inf$species, met_annotation_inf$name, rxn_core_without_currency$name)
   rxn_core_without_currency$id <- getSingleReactionFormula(met_annotation_inf$id, met_annotation_inf$name, rxn_core_without_currency$name)
   rxn_core_without_currency$MetaID <- getSingleReactionFormula(met_annotation_inf$MetaID, met_annotation_inf$name, rxn_core_without_currency$name)
-  
+
   names_column <- c("rxnID", "name", "specie", "id", "type", "MetaID", "note")
   rxn_core_carbon_cellD0 <- rbind.data.frame(rxn_core_without_currency[, names_column], rxn_core_with_currency[, names_column])
   rxn_core_carbon_cellD0 <- rxn_core_carbon_cellD0[order(rxn_core_carbon_cellD0$rxnID), ] # will be data source to import the reactions
@@ -721,7 +731,7 @@ rxnGeneMapping <- function(rxnid_gpr) {
   # a dataframe contains two columns, GPR and Abbreviation
   # output
   # a dataframe contains the gene/rxn mapping
-  
+
   ss <- rxnid_gpr
   ss$GPR <- str_replace_all(ss$GPR, "and", "or")
   ss0 <- splitAndCombine(ss$GPR, ss$Abbreviation, sep0 = "or")
