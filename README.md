@@ -18,7 +18,7 @@ devtools::install_github("SysBioChalmers/fastgraphGEM")
 
 ## Usage
 
-The detailed tutorial to use fastgraphGEM could be found in xxx.
+The detailed tutorial to use fastgraphGEM could be found in https://github.com/SysBioChalmers/fastgraphGEM/tree/R_package_test.
 
 
 ## Contributors
