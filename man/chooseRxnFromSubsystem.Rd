@@ -2,13 +2,15 @@
 % Please edit documentation in R/model change.R
 \name{chooseRxnFromSubsystem}
 \alias{chooseRxnFromSubsystem}
-\title{Title}
+\title{This function is used to choose the reaction based on subsytem definition}
 \usage{
 chooseRxnFromSubsystem(rxn_split_refine_inf, subsystem0)
 }
 \arguments{
-\item{subsystem0}{}
+\item{rxn_split_refine_inf}{a dataframe contains the rxn split format with the detailed annotation information}
+
+\item{subsystem0}{a string of defined subsystem}
 }
 \description{
-Title
+This function is used to choose the reaction based on subsytem definition
 }

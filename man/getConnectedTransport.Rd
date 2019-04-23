@@ -2,14 +2,22 @@
 % Please edit documentation in R/model change.R
 \name{getConnectedTransport}
 \alias{getConnectedTransport}
-\title{Title}
+\title{This function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
+for specific subsystem}
 \usage{
 getConnectedTransport(id, rxn_transport_id0, rxn_transport0,
   met_core_carbon0)
 }
 \arguments{
-\item{met_core_carbon0}{}
+\item{id}{a index of trabsport reaction id}
+
+\item{rxn_transport_id0}{a vector of transport id}
+
+\item{rxn_transport0}{a dataframe contains the annotation information for transport reaction}
+
+\item{met_core_carbon0}{a vector of the metabolite list from specific subsystem}
 }
 \description{
-Title
+This function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
+for specific subsystem
 }
