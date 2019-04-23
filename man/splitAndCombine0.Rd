@@ -2,7 +2,7 @@
 % Please edit documentation in R/model change.R
 \name{splitAndCombine0}
 \alias{splitAndCombine0}
-\title{function to establish the single mapping between one gene and one rxn}
+\title{This function is used to establish the single mapping between one gene and one rxn}
 \usage{
 splitAndCombine0(gene, rxn, sep0)
 }
@@ -14,5 +14,5 @@ splitAndCombine0(gene, rxn, sep0)
 \item{sep0}{a sign to connect the gene}
 }
 \description{
-function to establish the single mapping between one gene and one rxn
+This function is used to establish the single mapping between one gene and one rxn
 }

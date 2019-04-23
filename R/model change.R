@@ -5,7 +5,7 @@ library(igraph)
 library(networkD3)
 library(hongR)
 
-#' function to establish the single mapping between one gene and one rxn
+#' This function is used to establish the single mapping between one gene and one rxn
 #'
 #' @param gene a vector contains GPR relation for each reaction
 #' @param rxn a vector contains the rxnid
@@ -38,11 +38,18 @@ splitAndCombine0 <- function(gene, rxn, sep0) { ##one rxn has several genes, thi
 }
 
 
-#this function is used to split the reaction
+
+#' This function is used to split the reaction into the metabolite format
+#'
+#' @param reationFrame dataframe: column 1--ID0; column 2--Equation, which is the reaction formula
+#' @param sep0 the string to connect the reactant and product in a reaction
+#'
+#' @return
+#' @export rxn_met a dataframe contains the mapping between rxnID and each metabolite from the reaction
+#'
+#' @examples
 splitRxnToMetabolite <- function(reationFrame, sep0){
   #reationFrame <- rxn_final0
-  #input:
-  #dataframe: column 1--ID0; column 2--Equation, which is the reaction formula
   reationFrame$Equation <- str_replace_all(reationFrame$Equation, "->", "<=>")
   rxn_list <- str_split(reationFrame$Equation, sep0)
   for (i in seq(length(rxn_list))){
@@ -84,6 +91,7 @@ splitRxnToMetabolite <- function(reationFrame, sep0){
     }
   }
 
+
   #remove the coefficient for each metabolites, which will be easy to standardize this metabolite
   rxn_met <- rxn_met %>% separate(.,MetID, into = c('coefficient','MetID'), sep = " ")
   #rxn_met$MetID <- str_replace_all(rxn_met$MetID, "[:digit:] ","") %>%
@@ -96,7 +104,18 @@ splitRxnToMetabolite <- function(reationFrame, sep0){
   return(rxn_met)
 }
 
-#this function is used to split the reaction
+
+
+
+#' This function is used to split the reaction into the metabolite format for the model format defined in BiGG database
+#'
+#' @param reationFrame dataframe: column 1--ID0; column 2--Equation, which is the reaction formula
+#' @param sep0 the string to connect the reactant and product in a reaction
+#'
+#' @return
+#' @export rxn_met a dataframe contains the mapping between rxnID and each metabolite from the reaction
+#'
+#' @examples
 splitRxnToMetabolite.Ecoli <- function(reationFrame, sep0){
   #reationFrame <- rxn_final0
   #input:
@@ -153,13 +172,19 @@ splitRxnToMetabolite.Ecoli <- function(reationFrame, sep0){
   return(rxn_met)
 }
 
-# this function is designed for yeast GEM to split the reaction
+
+
+#
+#' This function is designed for yeast GEM to split the reaction
+#'
+#' @param rxn_inf a dataframe contains the rxn annotation of yeast GEM
+#' @param metabolite_inf a dataframe contains the metabolite annotation of yeast GEM
+#'
+#' @return
+#' @export rxn_split_refine a dataframe contained the split format of yeast GEM
+#'
+#' @examples
 splitRxnToMetabolite.Yeast <- function(rxn_inf, metabolite_inf) {
-  #input
-  # rxn_inf, rxn annotation of yeast GEM
-  # metabolite_inf, metabolite annotation of yeast GEM
-  #output
-  # rxn_split_refine a dataframe contained the split format of yeast GEM
 
   rxn_split <- splitAndCombine0(rxn_inf$Reaction, rxn_inf$Abbreviation, sep = " ")
   rxn_split$v3 <- getSingleReactionFormula(metabolite_inf$`Metabolite description`, metabolite_inf$`Metabolite name`, rxn_split$v1)
@@ -196,13 +221,18 @@ splitRxnToMetabolite.Yeast <- function(rxn_inf, metabolite_inf) {
 
 }
 
-#when removing the currency metabolites. some reaction could cotain only metabolite
-#this function is used to remove the exchange reaction and reactions with only one reactant or product
+
+
+#' When removing the currency metabolites. some reaction could cotain only metabolite
+#' This function is used to remove the exchange reaction and reactions with only one reactant or product
+#'
+#' @param rxn_split a dataframe contains the splited rxn
+#'
+#' @return
+#' @export rxn_split a dataframe contains the splited rxn in which a reaction with single metabolite or only with reactant (product) was removed
+#'
+#' @examples
 removeRxnWithSingleMet <- function(rxn_split=rxn_split_refine) {
-  #input
-  #rxn_split, a split rxn format
-  #output
-  #rxn_split, a split rxn in which a reaction with single metabolite or only with reactant (product) was removed
 
   analysis_rxn <- rxn_split %>%
     count(v2) %>% ## calculate the number of each metabolite
@@ -239,11 +269,18 @@ removeRxnWithSingleMet <- function(rxn_split=rxn_split_refine) {
 }
 
 
-# this function is used to estimate the metabolite type in a reaction.
+
+#' This function is used to estimate the metabolite type in a reaction.
+#'
+#' @param rxnID_inf a vector contains the reaction id
+#' @param rxn_split_inf a dataframe with three columns contains the splited rxn information
+#'
+#' @return
+#' @export met_type a vector contains the type for all the metabolites in a reaction
+#'
+#' @examples
 getMetType <- function(rxnID_inf, rxn_split_inf){
-  # input  rxnID_inf a list of reaction id
-  # input  rxn_split_inf a dataframe with three columns
-  # output met_type, a list contains the type for all the metabolites in a reaction
+
   ss <- which(rxn_split_inf$v2 %in% rxnID_inf==TRUE)
   ss_split <- which(rxn_split_inf$v2 %in% rxnID_inf ==TRUE & rxn_split_inf$v3 %in% "<=>" == TRUE)
   met_type1 <- vector()
@@ -260,9 +297,20 @@ getMetType <- function(rxnID_inf, rxn_split_inf){
   return(met_type)
 }
 
-# the fuction is used to extract the carbon part for a metabolite
+
+
+
+#' The fuction is used to extract the carbon part for a metabolite
+#'
+#' @param MET a metabolite formula, like C5H6
+#' @param type the string of atom kind, like "C"
+#'
+#' @return
+#' @export carbon_number
+#'
+#' @examples
 getMetaboliteComposition <- function(MET, type = "C") {
-  #input a metabolite formula, like C5H6
+  #input
   #output the carbon part of a metabolite, like C5
   if (str_detect(MET, paste(type, "[0-9]+", sep = ""))) {
     carbon_number <- str_extract_all(MET, paste(type, "[0-9]+", sep = ""))
@@ -274,10 +322,20 @@ getMetaboliteComposition <- function(MET, type = "C") {
   return(carbon_number[[1]][1])
 }
 
-# the function is used to extract the number of carbon based on the above function
+
+
+
+#' The function is used to extract the number of carbon based on the above function
+#'
+#' @param MET a carbon part of a molecular, like C5
+#' @param type the string of atom kind, like "C"
+#'
+#' @return
+#' @export carbon_number the number of carbon, like 5
+#'
+#' @examples
 getCompositionNum <- function(MET,type="C"){
-  # input a carbon part of a molecular, like C5
-  # output the number of carbon, like 5
+
   if (str_detect(MET, paste(type,"[0-9]+", sep=""))){
     carbon_number<- str_extract_all(MET, "[0-9]+")
   } else if (str_detect(MET, "C") & str_detect(MET, paste(type,"[0-9]+", sep=""))==FALSE ){
@@ -288,15 +346,22 @@ getCompositionNum <- function(MET,type="C"){
   return(carbon_number[[1]][1])
 }
 
-# This function is used to define the currency of metabolites in the model
+
+
+
+#' This function is used to define the currency of metabolites in the model
+#'
+#'
+#' @param rxn_split_refine0 a dataframe contains the split rxn format with detailed annotation in 10 columns
+#' @param subsystem0  a subsytem string
+#' @param numberGEM a number used to limit the number of currency metabolite from the whole model
+#' @param numberSubsystem a number used to limit the number of currency metabolite from each chose subsystems
+#'
+#' @return
+#' @export currency_metabolites vector of currency metabolite
+#'
+#' @examples
 DefineCurrencyMet <- function(rxn_split_refine0, subsystem0, numberGEM, numberSubsystem) {
-  # input
-  # rxn_split_refine0, a split rxn format with detailed annotation with 10 columns
-  # subsystem0, chose subsytem
-  # numberGEM,a number used to limit the number of currency metabolite from the whole model
-  # numberSubsystem, a number used to limit the number of currency metabolite from each chose subsystems
-  # output
-  # currency_metabolites, a vector of currency metabolite
 
   rxn_system0 <- select(rxn_split_refine0, v2, subsystem)
   colnames(rxn_system0) <- c("Abbreviation", "subsystem")
@@ -341,13 +406,25 @@ DefineCurrencyMet <- function(rxn_split_refine0, subsystem0, numberGEM, numberSu
   }
 }
 
-## define the base reactant and product for cellDesigner
+
+
+
+#' Define the base reactant and product for cellDesigner
+#' Title
+#'
+#' @param rxnID0 a reaction ID
+#' @param rxn_split_refine_inf a datafram contains the relation of rxnID0 and metabolite, as well as metabolite formula and and carbon number
+#'
+#' @return
+#' @export nn the index for the base reactant or product (with largest Carbon number)
+#'
+#' @examples
 DefineBaseMetabolite <- function(rxnID0, rxn_split_refine_inf){
   ## input: rxnID0: a reaction ID
   ## input: rxn_split_refine_inf: datafram contains the relation of rxnID0 and metabolite, as well as metabolite formula and
   ## and carbon number
   ## test rxnID0 <- "r_0520"
-  ## find the base reactant (with largest Carbon number)
+
   if(length(which(rxn_split_refine_inf$v2 %in% rxnID0 ==TRUE & rxn_split_refine_inf$type =="reactant")) !=0){
     rxn_reactant <- which(rxn_split_refine_inf$v2 %in% rxnID0 ==TRUE & rxn_split_refine_inf$type =="reactant")
     nn <- vector()
@@ -379,6 +456,8 @@ DefineBaseMetabolite <- function(rxnID0, rxn_split_refine_inf){
 
   return(nn)
 }
+
+
 
 
 #this function is used to give the "base" sign for two of metabolites from each reaction
