@@ -459,8 +459,17 @@ DefineBaseMetabolite <- function(rxnID0, rxn_split_refine_inf){
 
 
 
-
 #this function is used to give the "base" sign for two of metabolites from each reaction
+#' Title
+#'
+#' @param rxn_split_refine_inf
+#' @param metabolite_inf
+#' @param currency_metabolites_inf
+#'
+#' @return
+#' @export
+#'
+#' @examples
 addBaseTypeIntoRxn <- function(rxn_split_refine_inf, metabolite_inf, currency_metabolites_inf){
   ## remove currency metabolites
   ## based on Zhengming's suggestion, we will remain these currency metabolites in each subsystem
@@ -512,8 +521,20 @@ addBaseTypeIntoRxn <- function(rxn_split_refine_inf, metabolite_inf, currency_me
 }
 
 
+
 # this function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
 # for specific subsystem
+#' Title
+#'
+#' @param id
+#' @param rxn_transport_id0
+#' @param rxn_transport0
+#' @param met_core_carbon0
+#'
+#' @return
+#' @export
+#'
+#' @examples
 getConnectedTransport <- function (id,rxn_transport_id0, rxn_transport0, met_core_carbon0){
   #input
   # id, a index of trabsport reaction id
@@ -538,7 +559,17 @@ getConnectedTransport <- function (id,rxn_transport_id0, rxn_transport0, met_cor
 }
 
 
+
 # this function is used to choose the reaction based on subsytem definition
+#' Title
+#'
+#' @param rxn_split_refine_inf
+#' @param subsystem0
+#'
+#' @return
+#' @export
+#'
+#' @examples
 chooseRxnFromSubsystem <- function(rxn_split_refine_inf, subsystem0) {
   # input
   # rxn_split_refine_inf, rxn split format with the detailed annotation information
@@ -589,9 +620,20 @@ chooseRxnFromSubsystem <- function(rxn_split_refine_inf, subsystem0) {
   return(rxn_core_carbon)
 }
 
+
+
 # here is two new version of above two functions
 # this function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
 # for specific subsystem
+#' Title
+#'
+#' @param rxn_split_refine_inf0
+#' @param met_core_carbon0
+#'
+#' @return
+#' @export
+#'
+#' @examples
 getConnectedTransport_new <- function(rxn_split_refine_inf0, met_core_carbon0) {
   # input
   # rxn_split_refine_inf0, rxn split format with the detailed annotation information
@@ -630,7 +672,18 @@ getConnectedTransport_new <- function(rxn_split_refine_inf0, met_core_carbon0) {
   return(trasport_rxn_choosed)
 }
 
+
+
 # this function is used to choose the reaction based on subsytem definition
+#' Title
+#'
+#' @param rxn_split_refine_inf
+#' @param subsystem0
+#'
+#' @return
+#' @export
+#'
+#' @examples
 chooseRxnFromSubsystem_new <- function(rxn_split_refine_inf, subsystem0){
   # input
   # rxn_split_refine_inf, rxn split format with the detailed annotation information
@@ -678,7 +731,20 @@ chooseRxnFromSubsystem_new <- function(rxn_split_refine_inf, subsystem0){
 }
 
 
+
 #this function is used to define the coordinate information for the metabolites
+#' Title
+#'
+#' @param rxn_core_carbon_inf
+#' @param currency_metabolites_inf
+#' @param rxnID_choose_inf
+#' @param x_vector
+#' @param y_vector
+#'
+#' @return
+#' @export
+#'
+#' @examples
 prepareMET <- function(rxn_core_carbon_inf,
                        currency_metabolites_inf,
                        rxnID_choose_inf,
@@ -748,6 +814,14 @@ prepareMET <- function(rxn_core_carbon_inf,
 
 
 #this function is used to extract the gene and protein annotation from met_annotation
+#' Title
+#'
+#' @param met_annotation_inf
+#'
+#' @return
+#' @export
+#'
+#' @examples
 prepareGPR <- function(met_annotation_inf) {
   # input
   # met_annotation_inf a dataframe for the metabolite annotation with 9 columns which contains the metabolite, gene and proteins
@@ -771,6 +845,16 @@ prepareGPR <- function(met_annotation_inf) {
 
 
 # this function is to produce the rxn format used for celldesigner
+#' Title
+#'
+#' @param rxn_core_carbon_inf
+#' @param met_annotation_inf
+#' @param currency_metabolites_inf
+#'
+#' @return
+#' @export
+#'
+#' @examples
 prepareRXN <- function(rxn_core_carbon_inf, met_annotation_inf, currency_metabolites_inf) {
   #input
   # rxn_core_carbon_inf, a dataframe contained the detailed annotation of rxn_core
@@ -804,7 +888,18 @@ prepareRXN <- function(rxn_core_carbon_inf, met_annotation_inf, currency_metabol
   return(rxn_core_carbon_cellD0)
 }
 
+
+
+
 # this function is used to establish the mappping between rxn and gene
+#' Title
+#'
+#' @param rxnid_gpr
+#'
+#' @return
+#' @export
+#'
+#' @examples
 rxnGeneMapping <- function(rxnid_gpr) {
   # input
   # a dataframe contains two columns, GPR and Abbreviation
