@@ -2,8 +2,7 @@
 % Please edit documentation in R/model change.R
 \name{DefineBaseMetabolite}
 \alias{DefineBaseMetabolite}
-\title{Define the base reactant and product for cellDesigner
-Title}
+\title{Define the base reactant and product for cellDesigner}
 \usage{
 DefineBaseMetabolite(rxnID0, rxn_split_refine_inf)
 }
@@ -14,5 +13,4 @@ DefineBaseMetabolite(rxnID0, rxn_split_refine_inf)
 }
 \description{
 Define the base reactant and product for cellDesigner
-Title
 }

@@ -2,13 +2,19 @@
 % Please edit documentation in R/model change.R
 \name{getConnectedTransport_new}
 \alias{getConnectedTransport_new}
-\title{Title}
+\title{Here is two new version of above two functions
+This function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
+for specific subsystem}
 \usage{
 getConnectedTransport_new(rxn_split_refine_inf0, met_core_carbon0)
 }
 \arguments{
-\item{met_core_carbon0}{}
+\item{rxn_split_refine_inf0}{a dataframe contains rxn split format with the detailed annotation information}
+
+\item{met_core_carbon0}{a vector of the metabolite list from specific subsystem}
 }
 \description{
-Title
+Here is two new version of above two functions
+This function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
+for specific subsystem
 }
