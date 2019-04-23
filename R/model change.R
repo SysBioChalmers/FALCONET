@@ -410,7 +410,6 @@ DefineCurrencyMet <- function(rxn_split_refine0, subsystem0, numberGEM, numberSu
 
 
 #' Define the base reactant and product for cellDesigner
-#' Title
 #'
 #' @param rxnID0 a reaction ID
 #' @param rxn_split_refine_inf a datafram contains the relation of rxnID0 and metabolite, as well as metabolite formula and and carbon number
@@ -459,15 +458,14 @@ DefineBaseMetabolite <- function(rxnID0, rxn_split_refine_inf){
 
 
 
-#this function is used to give the "base" sign for two of metabolites from each reaction
-#' Title
+#' This function is used to give the "base" sign for two of metabolites from each reaction
 #'
-#' @param rxn_split_refine_inf
-#' @param metabolite_inf
-#' @param currency_metabolites_inf
+#' @param rxn_split_refine_inf a dataframe contains the split rxn information
+#' @param metabolite_inf a dataframe contains the metabolite annotation information
+#' @param currency_metabolites_inf a vector contains the currency metabolite information
 #'
 #' @return
-#' @export
+#' @export rxn_split_refine_inf a dataframe of rxn_split with "base" sign
 #'
 #' @examples
 addBaseTypeIntoRxn <- function(rxn_split_refine_inf, metabolite_inf, currency_metabolites_inf){
@@ -475,14 +473,6 @@ addBaseTypeIntoRxn <- function(rxn_split_refine_inf, metabolite_inf, currency_me
   ## based on Zhengming's suggestion, we will remain these currency metabolites in each subsystem
   ## but there will different methods to format for the currecy metabolite and general metabolite
   ## for these currency metabolite, there carbon number will be set as "" to avoid the wrong defination of base reactant or product
-
-  #input
-  # rxn_split_refine_inf  rxn split format
-  # metabolite_inf metabolite annotation information
-  # currency_metabolites_inf a vector of currency metabolites
-  #output
-  #rxn_split_refine, rxn_split with "base" sign
-
 
 
   ## obtain other information
@@ -522,27 +512,21 @@ addBaseTypeIntoRxn <- function(rxn_split_refine_inf, metabolite_inf, currency_me
 
 
 
-# this function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
-# for specific subsystem
-#' Title
+#' This function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
+#' for specific subsystem
 #'
-#' @param id
-#' @param rxn_transport_id0
-#' @param rxn_transport0
-#' @param met_core_carbon0
+#'
+#' @param id a index of trabsport reaction id
+#' @param rxn_transport_id0 a vector of transport id
+#' @param rxn_transport0 a dataframe contains the annotation information for transport reaction
+#' @param met_core_carbon0 a vector of the metabolite list from specific subsystem
 #'
 #' @return
-#' @export
+#' @export mm the id of transport reactions which choosed
 #'
 #' @examples
 getConnectedTransport <- function (id,rxn_transport_id0, rxn_transport0, met_core_carbon0){
-  #input
-  # id, a index of trabsport reaction id
-  # rxn_transport_id0, a vector of transport id
-  # rxn_transport0, a dataframe contains the annotation information for transport reaction
-  # met_core_carbon0, a vector of the metabolite list from specific subsystem
-  # output
-  # mm, the id of transport reactions which choosed
+
   met_transport_index <- which(rxn_transport0$v2 %in% rxn_transport_id0[id] )
   met_transport <- rxn_transport0$v3[met_transport_index]
   ss <- vector()
@@ -560,22 +544,18 @@ getConnectedTransport <- function (id,rxn_transport_id0, rxn_transport0, met_cor
 
 
 
-# this function is used to choose the reaction based on subsytem definition
-#' Title
+#' This function is used to choose the reaction based on subsytem definition
 #'
-#' @param rxn_split_refine_inf
-#' @param subsystem0
+#'
+#' @param rxn_split_refine_inf  a dataframe contains the rxn split format with the detailed annotation information
+#' @param subsystem0 a string of defined subsystem
 #'
 #' @return
-#' @export
+#' @export rxn_core_carbon a dataframe contains reactions and the related transport reactions from specific subsystems
 #'
 #' @examples
 chooseRxnFromSubsystem <- function(rxn_split_refine_inf, subsystem0) {
-  # input
-  # rxn_split_refine_inf, rxn split format with the detailed annotation information
-  # subsystem0, a string of defined subsystem
-  # output
-  # rxn_core_carbon, reactions and the related transport reactions from specific subsystems
+
 
   index_combine0 <- which(str_detect(rxn_split_refine_inf$subsystem, subsystem0) == TRUE)
 
@@ -622,24 +602,20 @@ chooseRxnFromSubsystem <- function(rxn_split_refine_inf, subsystem0) {
 
 
 
-# here is two new version of above two functions
-# this function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
-# for specific subsystem
-#' Title
+#' Here is two new version of above two functions
+#' This function is used to get the id for the transport reaction which could connect the metabolites occured in different compartment
+#' for specific subsystem
 #'
-#' @param rxn_split_refine_inf0
-#' @param met_core_carbon0
+#' @param rxn_split_refine_inf0 a dataframe contains rxn split format with the detailed annotation information
+#' @param met_core_carbon0 a vector of the metabolite list from specific subsystem
 #'
 #' @return
-#' @export
+#' @export trasport_rxn_choosed a dataframe of transport reactions chose based on the metabolites in the specific subsystems
 #'
 #' @examples
 getConnectedTransport_new <- function(rxn_split_refine_inf0, met_core_carbon0) {
-  # input
-  # rxn_split_refine_inf0, rxn split format with the detailed annotation information
-  # met_core_carbon0, a vector of the metabolite list from specific subsystem
-  # output
-  # transport reactions chose based on the metabolites in the specific subsystems
+
+
   connected_rxn <- vector()
   index_transport <- which(str_detect(rxn_split_refine_inf0$subsystem, "transport") == TRUE)
   rxn_transport <- rxn_split_refine_inf0[index_transport, ]
@@ -674,22 +650,18 @@ getConnectedTransport_new <- function(rxn_split_refine_inf0, met_core_carbon0) {
 
 
 
-# this function is used to choose the reaction based on subsytem definition
-#' Title
+#' This function is used to choose the reaction based on subsytem definition
 #'
-#' @param rxn_split_refine_inf
-#' @param subsystem0
+#'
+#' @param rxn_split_refine_inf a dataframe contains rxn split format with the detailed annotation information
+#' @param subsystem0 a string of defined subsystem
 #'
 #' @return
-#' @export
+#' @export rxn_core_carbon a dataframe contains reactions and the related transport reactions from specific subsystems
 #'
 #' @examples
 chooseRxnFromSubsystem_new <- function(rxn_split_refine_inf, subsystem0){
-  # input
-  # rxn_split_refine_inf, rxn split format with the detailed annotation information
-  # subsystem0, a string of defined subsystem
-  # output
-  # rxn_core_carbon, reactions and the related transport reactions from specific subsystems
+
 
   #-----------------------------------------------test
   #rxn_split_refine_inf <- rxn_split_refine
