@@ -1,5 +1,16 @@
 ### code to update the metabolite name in the model, which will be used for the yeast map
-source('model change.R')
+# This code is used to prepare the data for the map from model in BIGG format
+#source('model change.R')
+#source('visualization_based_R.R')
+
+library(fastgraphGEM)
+library(stringr)
+library(tidyverse)
+library(readxl)
+library(igraph)
+library(networkD3)
+library(hongR)
+
 
 
 # input the model and metabolite

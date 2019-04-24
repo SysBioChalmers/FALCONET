@@ -1,6 +1,3 @@
-library(hongR)
-library(tidyverse)
-source('map_refine_and_omics_mapping.R')
 ## change the size for the none-base metabolites
 ## define a list of none-base metabolites list
 ## adjust the size based on none-base metabolite list

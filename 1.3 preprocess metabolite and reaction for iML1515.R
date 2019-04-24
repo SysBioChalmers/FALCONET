@@ -1,6 +1,14 @@
 # This code is used to prepare the data for the map from model in BIGG format
-source('model change.R')
-source('transition for cellDesigner.R')
+# source('model change.R')
+# source('transition for cellDesigner.R')
+library(fastgraphGEM)
+library(stringr)
+library(tidyverse)
+library(readxl)
+library(igraph)
+library(networkD3)
+library(hongR)
+
 
 #part one
 #prepare the reaction format

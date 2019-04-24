@@ -1,6 +1,14 @@
 # This code is used to prepare the data for the map
-source('model change.R')
-source('transition for cellDesigner.R')
+# source('model change.R')
+# source('transition for cellDesigner.R')
+
+library(fastgraphGEM)
+library(stringr)
+library(tidyverse)
+library(readxl)
+library(igraph)
+library(networkD3)
+library(hongR)
 
 # prepare the reaction format
 rxn <- read_excel("data/yeastGEM_latest version1.xls", sheet = "Reaction List")
