@@ -1,5 +1,5 @@
-# this function is used to adjust size of non base metabolite in the map
-#' Title
+#' This function is used to adjust size of non base metabolite in the map
+#'
 #'
 #' @param positionID the position of the component
 #' @param uniqueID the unique ID of the metabolite

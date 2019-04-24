@@ -2,14 +2,18 @@
 % Please edit documentation in R/model change.R
 \name{prepareRXN}
 \alias{prepareRXN}
-\title{Title}
+\title{This function is to produce the rxn format used for celldesigner}
 \usage{
 prepareRXN(rxn_core_carbon_inf, met_annotation_inf,
   currency_metabolites_inf)
 }
 \arguments{
-\item{currency_metabolites_inf}{}
+\item{rxn_core_carbon_inf}{a dataframe contains the detailed annotation of rxn_core}
+
+\item{met_annotation_inf}{a dataframe contains the detailed annotation of met}
+
+\item{currency_metabolites_inf}{a vector of currency metabolites}
 }
 \description{
-Title
+This function is to produce the rxn format used for celldesigner
 }
