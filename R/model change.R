@@ -704,17 +704,17 @@ chooseRxnFromSubsystem_new <- function(rxn_split_refine_inf, subsystem0){
 
 
 
-#this function is used to define the coordinate information for the metabolites
-#' Title
+#' This function is used to define the coordinate information for the metabolites
 #'
-#' @param rxn_core_carbon_inf
-#' @param currency_metabolites_inf
-#' @param rxnID_choose_inf
-#' @param x_vector
-#' @param y_vector
+#'
+#' @param rxn_core_carbon_inf  a dataframe contains the detailed annotation of rxn_core
+#' @param currency_metabolites_inf a vector of currency metabolites
+#' @param rxnID_choose_inf a vector of choosed rxnID
+#' @param x_vector a vector contains the x coordinate of each component
+#' @param y_vector a vector contains the y coordinate of each component
 #'
 #' @return
-#' @export
+#' @export met_annotation a dataframe contains the detailed annotation for met
 #'
 #' @examples
 prepareMET <- function(rxn_core_carbon_inf,
@@ -723,14 +723,7 @@ prepareMET <- function(rxn_core_carbon_inf,
                        x_vector = seq(100, 12000, by = 100),
                        y_vector = seq(100, 15000, by = 50)) {
 
-  #input
-  # rxn_core_carbon_inf, a dataframe contained the detailed annotation of rxn_core
-  # currency_metabolites_inf, a vector of currency metabolites
-  # rxnID_choose_inf, a vector of choosed rxnID
-  # x_vector, size of graph
-  # y_vector, size of graph
-  #outout
-  #met_annotation, a dataframe contains the detailed annotation for met
+
 
 
   met_core_carbon <- select(rxn_core_carbon_inf, v2, v3, type, simple_name)
@@ -816,24 +809,18 @@ prepareGPR <- function(met_annotation_inf) {
 
 
 
-# this function is to produce the rxn format used for celldesigner
-#' Title
+#' This function is to produce the rxn format used for celldesigner
 #'
-#' @param rxn_core_carbon_inf
-#' @param met_annotation_inf
-#' @param currency_metabolites_inf
+#'
+#' @param rxn_core_carbon_inf a dataframe contains the detailed annotation of rxn_core
+#' @param met_annotation_inf  a dataframe contains the detailed annotation of met
+#' @param currency_metabolites_inf a vector of currency metabolites
 #'
 #' @return
-#' @export
+#' @export rxn_core_carbon_cellD0 a dataframe for the rxn annotation with 7 columns
 #'
 #' @examples
 prepareRXN <- function(rxn_core_carbon_inf, met_annotation_inf, currency_metabolites_inf) {
-  #input
-  # rxn_core_carbon_inf, a dataframe contained the detailed annotation of rxn_core
-  # met_annotation_inf, a dataframe contained the detailed annotation of met
-  # currency_metabolites_inf, a vector of currency metabolites
-  # output
-  # rxn_core_carbon_cellD0, a dataframe for the rxn annotation with 7 columns
 
   rxn_core_carbon_cellD <- select(rxn_core_carbon_inf, v2, v3, type, note, simple_name)
   colnames(rxn_core_carbon_cellD) <- c("rxnID", "name", "type", "note", "simple_name")
@@ -863,20 +850,17 @@ prepareRXN <- function(rxn_core_carbon_inf, met_annotation_inf, currency_metabol
 
 
 
-# this function is used to establish the mappping between rxn and gene
+#' This function is used to establish the mappping between rxn and gene
 #' Title
 #'
-#' @param rxnid_gpr
+#' @param rxnid_gpr a dataframe contains two columns, GPR and Abbreviation
 #'
 #' @return
-#' @export
+#' @export ss1 a dataframe contains the gene/rxn mapping
 #'
 #' @examples
 rxnGeneMapping <- function(rxnid_gpr) {
-  # input
-  # a dataframe contains two columns, GPR and Abbreviation
-  # output
-  # a dataframe contains the gene/rxn mapping
+
 
   ss <- rxnid_gpr
   ss$GPR <- str_replace_all(ss$GPR, "and", "or")

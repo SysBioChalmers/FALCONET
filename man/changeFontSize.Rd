@@ -2,7 +2,7 @@
 % Please edit documentation in R/map_refine_and_omics_mapping.R
 \name{changeFontSize}
 \alias{changeFontSize}
-\title{Title}
+\title{This function is used to adjust size of non base metabolite in the map}
 \usage{
 changeFontSize(positionID, uniqueID, onemap)
 }
@@ -14,5 +14,5 @@ changeFontSize(positionID, uniqueID, onemap)
 \item{onemap}{a map in xml format}
 }
 \description{
-Title
+This function is used to adjust size of non base metabolite in the map
 }

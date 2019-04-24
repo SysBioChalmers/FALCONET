@@ -2,15 +2,23 @@
 % Please edit documentation in R/model change.R
 \name{prepareMET}
 \alias{prepareMET}
-\title{Title}
+\title{This function is used to define the coordinate information for the metabolites}
 \usage{
 prepareMET(rxn_core_carbon_inf, currency_metabolites_inf, rxnID_choose_inf,
   x_vector = seq(100, 12000, by = 100), y_vector = seq(100, 15000, by =
   50))
 }
 \arguments{
-\item{y_vector}{}
+\item{rxn_core_carbon_inf}{a dataframe contains the detailed annotation of rxn_core}
+
+\item{currency_metabolites_inf}{a vector of currency metabolites}
+
+\item{rxnID_choose_inf}{a vector of choosed rxnID}
+
+\item{x_vector}{a vector contains the x coordinate of each component}
+
+\item{y_vector}{a vector contains the y coordinate of each component}
 }
 \description{
-Title
+This function is used to define the coordinate information for the metabolites
 }
