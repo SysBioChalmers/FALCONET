@@ -56,7 +56,9 @@ rxn_split_refine$v3 <- str_replace_all(rxn_split_refine$v3, "M_", "")
 
 # choose the subsytem
 subsystem1 <-  "sce00010  Glycolysis / Gluconeogenesis"
-
+# for test we change the subsystem into 'one'
+rxn_split_refine$subsystem <- "one"
+subsystem1 <- "one"
 # Define the currency metabolite in each subsystem
 currency_metabolites <- DefineCurrencyMet(rxn_split_refine, 
                                           subsystem0=subsystem1,
