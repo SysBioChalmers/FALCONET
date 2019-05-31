@@ -237,7 +237,9 @@ i_graph_3 %>%
   export_graph(
     file_name = "result/graph.eps",
     title = "Simple Graph")
+
 # find the path between two nodes
+# for the big graph, this steps can be slow.
 i_graph_3 %>%
   get_paths(
     from = 54,
