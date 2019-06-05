@@ -1,9 +1,9 @@
-# FALCON
-This repository contains R scripts for package FALCON.
+# FALCONET
+This repository contains R scripts for package FALCONET.
 * Last update: 2019-05-31
 
 ## Overview
-R package – FALCON (FAst visuaLization of COmputational Networks) is especially designed to draw and visualize the metabolic maps for GEMs models in large scale. Together with cellDesigner, FALCON also make it possible to map multi-layers omics data onto the metabolic map in an easy way.
+R package – FALCONET (FAst visuaLization of COmputational Networks) is especially designed to draw and visualize the metabolic maps for GEMs models in large scale. Together with cellDesigner, FALCONET also make it possible to map multi-layers omics data onto the metabolic map in an easy way.
 
 
 ## Installation
@@ -12,13 +12,13 @@ To get the current development version from github:
 
 ```R
 # install.packages("devtools")
-devtools::install_github("SysBioChalmers/FALCON")
+devtools::install_github("SysBioChalmers/FALCONET")
 ```
 
 
 ## Usage
 
-The detailed tutorial to use FALCON could be found in https://github.com/SysBioChalmers/FALCON/tree/R_package_test.
+The detailed tutorial to use FALCONET could be found in https://github.com/SysBioChalmers/FALCONET/tree/R_package_test.
 
 
 ## Contributors
