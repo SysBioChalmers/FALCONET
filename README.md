@@ -1,6 +1,6 @@
 # FALCONET
 This repository contains R scripts and data for tutorial of package FALCONET. 
-To run the tutorial, please firstly a new project using R studio.
+To run the tutorial, please firstly exstablish a new project using R studio.
 Then download the scripts and data file into the the project.
 
 * Last update: 2019-06-08
