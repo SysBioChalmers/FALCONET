@@ -128,14 +128,3 @@ produceInputForCellDesigner(met_annotation,
                             rxn_core_carbon_cellD0,
                             x_size=1200, 
                             y_size=2000)
-
-
-
-
-
-#note
-# solve the currency metabolites calculation in subsystem level
-# but find more h+ from "Oxidative Phosphorylation", solved!
-# 0.5, 1.5 as the metabolite, solved!
-# h as the base reactant or product, 'r_TRDR'
-# but for larger subsytem "Nucleotide Salvage Pathway"(150 rxn), it is still difficult to display it.

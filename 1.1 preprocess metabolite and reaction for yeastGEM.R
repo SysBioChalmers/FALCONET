@@ -1,7 +1,6 @@
 # This code is used to prepare the data for the map
 # source('model change.R')
 # source('transition for cellDesigner.R')
-
 library(FALCONET)
 library(stringr)
 library(tidyverse)
