@@ -6,7 +6,7 @@
 
 
 # step 1 produce the map
-source('1.1 preprocess metabolite and reaction for yeastGEM.R')
+source('1.1 Prepare metabolite and reaction for yeastGEM.R')
 
 
 
