@@ -21,7 +21,7 @@ devtools::install_github("SysBioChalmers/FALCONET")
 
 ## Usage
 
-The detailed tutorial to use FALCONET could be found in xxx.
+The detailed tutorial to use FALCONET could be found in this branch.
 
 
 ## Contributors
