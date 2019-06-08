@@ -1,7 +1,7 @@
 # This code is used to prepare the data for the map from model in BIGG format
 # source('model change.R')
 # source('transition for cellDesigner.R')
-library(fastgraphGEM)
+library(FALCONET)
 library(stringr)
 library(tidyverse)
 library(readxl)
