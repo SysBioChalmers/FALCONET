@@ -20,7 +20,7 @@ defineGeneFoldColor <- function(omic_fold, up=2, down=0.5) {
 
 
 
-yeast_map <- readLines(file("result/model_test_check.xml"))
+yeast_map <- readLines(file("result/map_with_flux_fold_changes.xml"))
 index_rxn <- which(str_detect(yeast_map, "reaction metaid"))
 
 # extract the rxns
@@ -122,4 +122,4 @@ yeast_map[color_position] <- new_color
 yeast_map <- str_replace_all(yeast_map, "ffccff66", "ff33ffff")
 
 
-writeLines(yeast_map, file("result/model_test_check.xml"))
+writeLines(yeast_map, file("result/map_with_multilayer_omics.xml"))

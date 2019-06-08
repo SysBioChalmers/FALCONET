@@ -46,4 +46,4 @@ newline <- paste("line width=\"", flux_data$line_wide[i], "\" color=\"ff000000\"
 yeast_map[index_line1[i]] <- str_replace_all(yeast_map[index_line1[i]], oldline, newline)
 
 }
-writeLines(yeast_map, file("result/model_test_check.xml"))
+writeLines(yeast_map, file("result/map_with_flux_value.xml"))

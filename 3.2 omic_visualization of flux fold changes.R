@@ -58,5 +58,5 @@ for (i in 1:length(index_line1)) {
 }
 
 
-writeLines(yeast_map, file("result/model_test_check.xml"))
+writeLines(yeast_map, file("result/map_with_flux_fold_changes.xml"))
 
