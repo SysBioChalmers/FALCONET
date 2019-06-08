@@ -1,6 +1,9 @@
 # FALCONET
-This repository contains R scripts for package FALCONET.
-* Last update: 2019-05-31
+This repository contains R scripts and data for tutorial of package FALCONET. 
+To run the tutorial, please firstly a new project using R studio.
+Then download the scripts and data file into the the project.
+
+* Last update: 2019-06-08
 
 ## Overview
 R package – FALCONET (FAst visuaLization of COmputational Networks) is especially designed to draw and visualize the metabolic maps for GEMs models in large scale. Together with cellDesigner, FALCONET also make it possible to map multi-layers omics data onto the metabolic map in an easy way.
