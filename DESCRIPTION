@@ -5,7 +5,11 @@ Version: 1.0.1
 Authors@R:
     person("Hongzhong", "Lu", email = "luho@chalmers.se", role = c("cre"))
 Description: 
-    FALCONET (FAst visuaLisation of COmputational NETworks) enables the automatic formation and visualisation of metabolic maps from genome-scale models with R and CellDesigner, readily facilitating the visualisation of multi-layers omics datasets in the context of metabolic networks
+    FALCONET (FAst visuaLisation of COmputational NETworks) enables the 
+    automatic formation and visualisation of metabolic maps from 
+    genome-scale models with R and CellDesigner, readily facilitating 
+    the visualisation of multi-layers omics datasets in the context of 
+    metabolic networks.
 
 License: MIT + file LICENSE
 URL: https://github.com/SysBioChalmers/FALCONET
