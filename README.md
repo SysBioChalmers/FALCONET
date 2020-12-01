@@ -17,8 +17,8 @@ devtools::install_github("SysBioChalmers/FALCONET")
 
 
 ## Usage
-The detailed tutorial to use FALCONET could be found in https://github.com/hongzhonglu/FACONET_tutorial.
-To use the package normally, please firstly download the template files which are used to generate the xml file. These template files could be found in https://github.com/hongzhonglu/FACONET_tutorial/tree/master/data. They should be put in a directory file named 'data' within an Rstudio project. The files organization could refer to the above tutorial.
+The detailed tutorial to use FALCONET could be found in https://github.com/hongzhonglu/FALCONET_tutorial.
+To use the package normally, please firstly download the template files which are used to generate the xml file. These template files could be found in https://github.com/hongzhonglu/FALCONET_tutorial/tree/master/data. They should be put in a directory file named 'data' within an Rstudio project. The files organization could refer to the above tutorial.
 
 
 ## Contributors
